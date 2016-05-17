@@ -574,11 +574,9 @@ class CarbonSqlParser()
     fields.foreach(field => {
       if (isDetectAsDimentionDatatype(field.dataType.get)) {
         if (!splittedCols.isEmpty) {
-          splittedCols.foreach(excludedCol =>
-            if (field.column.equalsIgnoreCase(excludedCol)) {
-              noDictionaryDims :+= field.column
-            }
-          )
+           if (splittedCols.toSeq.exists(x => x.equalsIgnoreCase(field.column))) {
+            noDictionaryDims :+= field.column
+          }
         }
         dimFields += (field)
       }
