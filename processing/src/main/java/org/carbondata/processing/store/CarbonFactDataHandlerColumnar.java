@@ -377,11 +377,20 @@ public class CarbonFactDataHandlerColumnar implements CarbonFactHandler {
   private void fillColumnSchemaList(List<CarbonDimension> carbonDimensionsList,
       List<CarbonMeasure> carbonMeasureList) {
     wrapperColumnSchemaList = new ArrayList<ColumnSchema>();
-    for (CarbonDimension carbonDimension : carbonDimensionsList) {
-      wrapperColumnSchemaList.add(carbonDimension.getColumnSchema());
-    }
+    fillCollumnSchemaListForComplexDims(carbonDimensionsList, wrapperColumnSchemaList);
     for (CarbonMeasure carbonMeasure : carbonMeasureList) {
       wrapperColumnSchemaList.add(carbonMeasure.getColumnSchema());
+    }
+  }
+
+  private void fillCollumnSchemaListForComplexDims(List<CarbonDimension> carbonDimensionsList,
+      List<ColumnSchema> wrapperColumnSchemaList) {
+    for (CarbonDimension carbonDimension : carbonDimensionsList) {
+      wrapperColumnSchemaList.add(carbonDimension.getColumnSchema());
+      List<CarbonDimension> childDims = carbonDimension.getListOfChildDimensions();
+      if(null != childDims && childDims.size() > 0) {
+        fillCollumnSchemaListForComplexDims(childDims, wrapperColumnSchemaList);
+      }
     }
   }
 

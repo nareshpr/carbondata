@@ -590,6 +590,10 @@ public final class CarbonSchemaParser {
     StringBuffer columnGroups = new StringBuffer();
     for (int i = 0; i < dimensions.size(); i++) {
       CarbonDimension dimension = dimensions.get(i);
+      if(null != dimension.getListOfChildDimensions() &&
+          dimension.getListOfChildDimensions().size() > 0) {
+        break;
+      }
       if (!dimension.hasEncoding(Encoding.DICTIONARY)) {
         continue;
       }
