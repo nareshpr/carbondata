@@ -495,7 +495,7 @@ public class CarbonFactDataHandlerColumnar implements CarbonFactHandler {
     CarbonWriteDataHolder[] dataHolder = initialiseDataHolder(dataRows.size());
     CarbonWriteDataHolder keyDataHolder = initialiseKeyBlockHolder(dataRows.size());
     CarbonWriteDataHolder noDictionaryKeyDataHolder = null;
-    if (noDictionaryCount > 0) {
+    if ((noDictionaryCount + complexColCount) > 0) {
       noDictionaryKeyDataHolder = initialiseKeyBlockHolder(dataRows.size());
     }
     for (int count = 0; count < dataRows.size(); count++) {
@@ -562,7 +562,7 @@ public class CarbonFactDataHandlerColumnar implements CarbonFactHandler {
     calculateUniqueValue(min, uniqueValue);
     byte[][] byteArrayValues = keyDataHolder.getByteArrayValues().clone();
     byte[][] noDictionaryValueHolder = null;
-    if (noDictionaryCount > 0) {
+    if ((noDictionaryCount + complexColCount) > 0) {
       noDictionaryValueHolder = noDictionaryKeyDataHolder.getByteArrayValues();
     }
     ValueCompressionModel compressionModel = ValueCompressionUtil
