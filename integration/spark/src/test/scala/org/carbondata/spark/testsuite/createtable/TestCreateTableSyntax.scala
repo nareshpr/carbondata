@@ -25,7 +25,7 @@ import org.apache.spark.sql.common.util.QueryTest
 import org.scalatest.BeforeAndAfterAll
 
 /**
- * Test Class for data loading with hive syntax and old syntax
+ * Test Class for validating create table syntax for carbontable
  *
  */
 class TestCreateTableSyntax extends QueryTest with BeforeAndAfterAll {
