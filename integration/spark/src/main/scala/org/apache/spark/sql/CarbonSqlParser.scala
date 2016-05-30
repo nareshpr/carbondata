@@ -557,9 +557,9 @@ class CarbonSqlParser()
               " is no exist in table. Please check create table statement."
             throw new MalformedCarbonCommandException(errormsg)
           } else if (isComplexDimDictionaryExclude(fields.filter(x =>
-              x.column.equalsIgnoreCase(splittedCol.trim))(0).dataType.get)) {
+              x.column.equalsIgnoreCase(dictExcludeCol))(0).dataType.get)) {
             val errormsg = "DICTIONARY_EXCLUDE is unsupported for complex datatype column: " +
-              splittedCol.trim
+              dictExcludeCol
             throw new MalformedCarbonCommandException(errormsg)
           }
         }
