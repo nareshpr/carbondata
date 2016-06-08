@@ -889,7 +889,6 @@ public class CarbonCSVBasedSeqGenStep extends BaseStep {
     int l = 0;
     int msrCount = 0;
     boolean isNull = false;
-    int complexIndex = meta.noDictionaryCols.length;
     for (int j = 0; j < inputColumnsSize; j++) {
       String columnName = metaColumnNames[j];
       String foreignKeyColumnName = foreignKeyMappingColumns[j];
@@ -1049,7 +1048,8 @@ public class CarbonCSVBasedSeqGenStep extends BaseStep {
             complexType.parseStringAndWriteByteArray(meta.getTableName(), (String) r[j],
                 new String[] { meta.getComplexDelimiterLevel1(), meta.getComplexDelimiterLevel2() },
                 0, dataOutputStream, surrogateKeyGen);
-            byteBufferArr[complexIndex++] = ByteBuffer.wrap(byteArray.toByteArray());
+            byteBufferArr[meta.getComplexTypesIndexMapping().get(complexDataTypeName)] =
+                ByteBuffer.wrap(byteArray.toByteArray());
             if (null != byteArray) {
               byteArray.close();
             }

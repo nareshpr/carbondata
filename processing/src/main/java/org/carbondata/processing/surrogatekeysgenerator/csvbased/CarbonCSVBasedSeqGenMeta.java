@@ -84,6 +84,9 @@ public class CarbonCSVBasedSeqGenMeta extends BaseStepMeta implements StepMetaIn
    */
   protected Map<String, GenericDataType> complexTypes =
       new HashMap<String, GenericDataType>(CarbonCommonConstants.DEFAULT_COLLECTION_SIZE);
+
+  protected Map<String, Integer> complexTypesIndexMapping =
+      new HashMap<String, Integer>(CarbonCommonConstants.DEFAULT_COLLECTION_SIZE);
   /**
    * dimLens
    */
@@ -371,6 +374,14 @@ public class CarbonCSVBasedSeqGenMeta extends BaseStepMeta implements StepMetaIn
 
   public void setComplexTypes(Map<String, GenericDataType> complexTypes) {
     this.complexTypes = complexTypes;
+  }
+
+  public Map<String, Integer> getComplexTypesIndexMapping() {
+    return complexTypesIndexMapping;
+  }
+
+  public void setComplexTypesIndexMapping(Map<String, Integer> complexTypesIndexMapping) {
+    this.complexTypesIndexMapping = complexTypesIndexMapping;
   }
 
   public String getComplexDelimiterLevel1() {
@@ -747,10 +758,12 @@ public class CarbonCSVBasedSeqGenMeta extends BaseStepMeta implements StepMetaIn
 
   public void initialize() throws KettleException {
     columnSchemaDetailsWrapper = new ColumnSchemaDetailsWrapper(columnSchemaDetails);
+
+    updateDimensions(carbondim, carbonmsr, noDictionaryDims);
+
     if (null != complexTypeString) {
       complexTypes = getComplexTypesMap(complexTypeString);
     }
-    updateDimensions(carbondim, carbonmsr, noDictionaryDims);
 
     hirches = getHierarichies(carbonhier);
 
@@ -935,6 +948,7 @@ public class CarbonCSVBasedSeqGenMeta extends BaseStepMeta implements StepMetaIn
           new ArrayDataType(levelInfo[0], "", levelInfo[3]) :
           new StructDataType(levelInfo[0], "", levelInfo[3]);
       complexTypesMap.put(levelInfo[0], g);
+      this.complexTypesIndexMapping.put(levelInfo[0], i + this.noDictionaryCols.length);
       for (int j = 1; j < levels.length; j++) {
         levelInfo = levels[j].split(CarbonCommonConstants.COLON_SPC_CHARACTER);
         switch (levelInfo[1]) {
