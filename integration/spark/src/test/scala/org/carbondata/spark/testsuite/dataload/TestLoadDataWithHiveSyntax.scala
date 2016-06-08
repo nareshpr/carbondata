@@ -116,7 +116,7 @@ class TestLoadDataWithHiveSyntax extends QueryTest with BeforeAndAfterAll {
         "proddate struct<productionDate:string,activeDeactivedate:array<string>>, gamePointId double,contractNumber double) "+
         "STORED BY 'org.apache.carbondata.format' "+
         "TBLPROPERTIES ('DICTIONARY_INCLUDE'='deviceInformationId','DICTIONARY_EXCLUDE'='channelsId')")
-    sql("LOAD DATA local inpath './src/main/resources/complextypediffentcolheaderorder.csv' INTO table complexcarbontable "+
+    sql("LOAD DATA local inpath './src/test/resources/complextypediffentcolheaderorder.csv' INTO table complexcarbontable "+
         "OPTIONS('DELIMITER'=',', 'QUOTECHAR'='\"', 'FILEHEADER'='deviceInformationId,channelsId,ROMSize,purchasedate,MAC,abc,mobile,locationinfo,proddate,gamePointId,contractNumber',"+
         "'COMPLEX_DELIMITER_LEVEL_1'='$', 'COMPLEX_DELIMITER_LEVEL_2'=':')")
     sql("select count(*) from complexcarbontable")
