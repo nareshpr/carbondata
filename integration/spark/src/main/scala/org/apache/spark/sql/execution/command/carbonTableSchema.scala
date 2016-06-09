@@ -1877,7 +1877,7 @@ private[sql] case class DescribeCommandFormatted(
         if (dimension.hasEncoding(Encoding.DICTIONARY)) {
           "DICTIONARY, KEY COLUMN"
         } else {
-          "NO DICTIONARY, KEY COLUMN"
+          "KEY COLUMN"
         }
       } else {
         ""
