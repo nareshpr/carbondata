@@ -763,6 +763,8 @@ public class CarbonCSVBasedSeqGenMeta extends BaseStepMeta implements StepMetaIn
 
     if (null != complexTypeString) {
       complexTypes = getComplexTypesMap(complexTypeString);
+    } else {
+      complexTypeColumns = new String[0];
     }
 
     hirches = getHierarichies(carbonhier);
