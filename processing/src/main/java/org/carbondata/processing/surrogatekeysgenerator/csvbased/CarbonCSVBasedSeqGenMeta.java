@@ -85,8 +85,6 @@ public class CarbonCSVBasedSeqGenMeta extends BaseStepMeta implements StepMetaIn
   protected Map<String, GenericDataType> complexTypes =
       new HashMap<String, GenericDataType>(CarbonCommonConstants.DEFAULT_COLLECTION_SIZE);
 
-  protected Map<String, Integer> complexTypesIndexMapping =
-      new HashMap<String, Integer>(CarbonCommonConstants.DEFAULT_COLLECTION_SIZE);
   /**
    * dimLens
    */
@@ -258,6 +256,8 @@ public class CarbonCSVBasedSeqGenMeta extends BaseStepMeta implements StepMetaIn
   private String complexDelimiterLevel1;
   private String complexDelimiterLevel2;
   private String complexTypeString;
+
+  private String[] complexTypeColumns;
   /**
    * Primary Key String
    */
@@ -376,14 +376,6 @@ public class CarbonCSVBasedSeqGenMeta extends BaseStepMeta implements StepMetaIn
     this.complexTypes = complexTypes;
   }
 
-  public Map<String, Integer> getComplexTypesIndexMapping() {
-    return complexTypesIndexMapping;
-  }
-
-  public void setComplexTypesIndexMapping(Map<String, Integer> complexTypesIndexMapping) {
-    this.complexTypesIndexMapping = complexTypesIndexMapping;
-  }
-
   public String getComplexDelimiterLevel1() {
     return complexDelimiterLevel1;
   }
@@ -406,6 +398,14 @@ public class CarbonCSVBasedSeqGenMeta extends BaseStepMeta implements StepMetaIn
 
   public void setComplexTypeString(String complexTypeString) {
     this.complexTypeString = complexTypeString;
+  }
+
+  public String[] getComplexTypeColumns() {
+    return complexTypeColumns;
+  }
+
+  public void setComplexTypeColumns(String[] complexTypeColumns) {
+    this.complexTypeColumns = complexTypeColumns;
   }
 
   public String getCarbonMetaHier() {
@@ -941,6 +941,7 @@ public class CarbonCSVBasedSeqGenMeta extends BaseStepMeta implements StepMetaIn
   private Map<String, GenericDataType> getComplexTypesMap(String complexTypeString) {
     Map<String, GenericDataType> complexTypesMap = new LinkedHashMap<String, GenericDataType>();
     String[] hierarchies = complexTypeString.split(CarbonCommonConstants.SEMICOLON_SPC_CHARACTER);
+    complexTypeColumns = new String[hierarchies.length];
     for (int i = 0; i < hierarchies.length; i++) {
       String[] levels = hierarchies[i].split(CarbonCommonConstants.HASH_SPC_CHARACTER);
       String[] levelInfo = levels[0].split(CarbonCommonConstants.COLON_SPC_CHARACTER);
@@ -948,7 +949,7 @@ public class CarbonCSVBasedSeqGenMeta extends BaseStepMeta implements StepMetaIn
           new ArrayDataType(levelInfo[0], "", levelInfo[3]) :
           new StructDataType(levelInfo[0], "", levelInfo[3]);
       complexTypesMap.put(levelInfo[0], g);
-      this.complexTypesIndexMapping.put(levelInfo[0], i + this.noDictionaryCols.length);
+      complexTypeColumns[i] = levelInfo[0];
       for (int j = 1; j < levels.length; j++) {
         levelInfo = levels[j].split(CarbonCommonConstants.COLON_SPC_CHARACTER);
         switch (levelInfo[1]) {
