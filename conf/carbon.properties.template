@@ -1,0 +1,69 @@
+#################### Performance Configuration ##################
+#File read buffer size used during sorting:MIN=:MAX=
+carbon.sort.file.buffer.size=20
+#Rowset size exchanged between data load graph steps.:MIN=:MAX=
+carbon.graph.rowset.size=100000
+#Number of cores to be used.:MIN=:MAX=
+carbon.number.of.cores=4
+#Number of cores to be used while data loading:MIN=:MAX=
+carbon.number.of.cores.while.loading=6
+#Number of cores to be used while compacting:MIN=:MAX=
+carbon.number.of.cores.while.compacting=2
+#default minor compaction in MBs
+carbon.minor.compaction.size=256
+#default major compaction in MBs
+carbon.major.compaction.size=1024
+#Carbon Inmemory record size:MIN=:MAX=
+carbon.inmemory.record.size=100000
+#CARBON sort size.:MIN=:MAX=
+carbon.sort.size=500000
+#Improves the performance of filter query
+carbon.enable.quick.filter=false
+#Algorithm for hashmap for hashkey calculation
+carbon.enableXXHash=true
+
+#################### System Configuration ##################
+#Mandatory. Carbon Store path
+carbon.storelocation=hdfs://hacluster/Opt/CarbonStore
+#Base directory for Data files
+carbon.ddl.base.hdfs.url=hdfs://hacluster/opt/data
+#Path where the bad records are stored
+carbon.badRecords.location=/opt/Carbon/Spark/badrecords
+#Mandatory. path to kettle home
+carbon.kettle.home=$<SPARK_HOME>/carbonlib/carbonplugins
+
+#################### Extra Configuration ##################
+######File write buffer size used during sorting.
+#carbon.sort.file.write.buffer.size=10485760
+######Minimum no of intermediate files after which sort merged to be started.
+#carbon.sort.intermediate.files.limit=20
+######Number of cores to be used for block sort while dataloading
+#carbon.number.of.cores.block.sort=7
+######max level cache size upto which level cache will be loaded in memory
+#carbon.max.level.cache.size=-1
+######To enable compaction while data loading
+#carbon.enable.auto.load.merge=false
+######csv reading buffer size.
+#carbon.csv.read.buffersize.byte=1048576
+######High Cardinality value
+#high.cardinality.value=100000
+######Carbon blocklet size. Note: this configuration cannot be change once store is generated
+#carbon.blocklet.size=120000
+######CARBON maximum no of threads used for sorting.
+#carbon.max.thread.for.sorting=3
+######Maximum time allowed for one query to be executed.
+#max.query.execution.time=60
+######How to times retry to get the lock
+#carbon.load.metadata.lock.retries=3
+######Interval between the retries to get the lock
+#carbon.load.metadata.lock.retry.timeout.sec=5
+######Maximum number of blocklets written in a single file.:Min=1:Max=1000
+#carbon.max.file.size=100
+######Timestamp format of input data used for timestamp data type.
+#carbon.timestamp.format=yyyy-MM-dd HH:mm:ss
+######Min max is feature added to enhance query performance. To disable this feature, make it false.
+#carbon.enableMinMax=true
+######Temporary store location, By default it will take System.getProperty("java.io.tmpdir")
+#carbon.tempstore.location=/opt/Carbon/TempStoreLoc
+######data loading records count logger
+#carbon.load.log.counter=500000
