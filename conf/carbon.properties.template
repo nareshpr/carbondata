@@ -10,13 +10,13 @@ carbon.kettle.home=$<SPARK_HOME>/carbonlib/carbonplugins
 
 #################### Performance Configuration ##################
 ######## DataLoading Configuration ########
-#File read buffer size used during sorting:MIN=:MAX=
+#File read buffer size used during sorting
 carbon.sort.file.buffer.size=20
-#Rowset size exchanged between data load graph steps.:MIN=:MAX=
+#Rowset size exchanged between data load graph steps
 carbon.graph.rowset.size=100000
-#Number of cores to be used while data loading:MIN=:MAX=
+#Number of cores to be used while data loading
 carbon.number.of.cores.while.loading=6
-#buffer size to sort and write to temp intermediate files:MIN=:MAX=
+#buffer size to sort and write to temp intermediate files
 carbon.sort.size=500000
 #Algorithm for hashmap for hashkey calculation
 carbon.enableXXHash=true
@@ -27,16 +27,16 @@ carbon.enableXXHash=true
 #enable prefetch of data during merge sort while reading data from sort temp files in data loading
 #carbon.merge.sort.prefetch=true
 ######## Compaction Configuration ########
-#Number of cores to be used while compacting:MIN=:MAX=
+#Number of cores to be used while compacting
 carbon.number.of.cores.while.compacting=2
-#Number of segments to be merged in stage 1, number of compacted segments to be merged in stage 2.
+#For minor compaction, Number of segments to be merged in stage 1, number of compacted segments to be merged in stage 2.
 carbon.compaction.level.threshold=4,3
-#default major compaction in MBs for major compaction to be triggered
+#default size (in MB) for major compaction to be triggered
 carbon.major.compaction.size=1024
 ######## Query Configuration ########
-#Number of cores to be used.:MIN=:MAX=
+#Number of cores to be used while querying
 carbon.number.of.cores=4
-#Number of records to be in memory while querying:MIN=:MAX=
+#Number of records to be in memory while querying
 carbon.inmemory.record.size=100000
 #Improves the performance of filter query
 carbon.enable.quick.filter=false
@@ -55,9 +55,7 @@ carbon.enable.quick.filter=false
 #carbon.block.meta.size.reserved.percentage=10
 ##csv reading buffer size.
 #carbon.csv.read.buffersize.byte=1048576
-##space reserved in percentage for writing block meta data in carbon data file
-#carbon.block.meta.size.reserved.percentage=10
-##High Cardinality value
+##To identify and apply compression for non-high cardinality columns
 #high.cardinality.value=100000
 ##CARBON maximum no of threads used for sorting.
 #carbon.max.thread.for.sorting=3
