@@ -21,11 +21,6 @@ package org.carbondata.core.constants;
 
 public final class CarbonCommonConstants {
   /**
-   * MERGER_FOLDER_EXT
-   */
-  public static final String MERGER_FOLDER_EXT = ".merge";
-
-  /**
    * integer size in bytes
    */
   public static final int INT_SIZE_IN_BYTE = 4;
@@ -76,7 +71,7 @@ public final class CarbonCommonConstants {
   /**
    * default location of the carbon member, hierarchy and fact files
    */
-  public static final String STORE_LOCATION_DEFAULT_VAL = "../unibi-solutions/system/carbon/store";
+  public static final String STORE_LOCATION_DEFAULT_VAL = "../carbon.store";
   /**
    * CARDINALITY_INCREMENT_DEFAULT_VALUE
    */
@@ -212,11 +207,6 @@ public final class CarbonCommonConstants {
    * SORT_TEMP_FILE_LOCATION
    */
   public static final String SORT_TEMP_FILE_LOCATION = "sortrowtmp";
-  /**
-   * CARBON_Realtime_data
-   */
-  public static final String CARBON_REALTIMEDATA_FILE =
-      "../unibi-solutions/system/carbon/realtimedata.properties";
   /**
    * CARBON_RESULT_SIZE_DEFAULT
    */
