@@ -16,7 +16,7 @@ carbon.sort.file.buffer.size=20
 carbon.graph.rowset.size=100000
 #Number of cores to be used while data loading:MIN=:MAX=
 carbon.number.of.cores.while.loading=6
-#CARBON sort size.:MIN=:MAX=
+#buffer size to sort and write to temp intermediate files:MIN=:MAX=
 carbon.sort.size=500000
 #Algorithm for hashmap for hashkey calculation
 carbon.enableXXHash=true
@@ -29,23 +29,25 @@ carbon.enableXXHash=true
 ######## Compaction Configuration ########
 #Number of cores to be used while compacting:MIN=:MAX=
 carbon.number.of.cores.while.compacting=2
-#default minor compaction in MBs
-carbon.minor.compaction.size=256
-#default major compaction in MBs
+#Number of segments to be merged in stage 1, number of compacted segments to be merged in stage 2.
+carbon.compaction.level.threshold=4,3
+#default major compaction in MBs for major compaction to be triggered
 carbon.major.compaction.size=1024
 ######## Query Configuration ########
 #Number of cores to be used.:MIN=:MAX=
 carbon.number.of.cores=4
-#Carbon Inmemory record size:MIN=:MAX=
+#Number of records to be in memory while querying:MIN=:MAX=
 carbon.inmemory.record.size=100000
 #Improves the performance of filter query
 carbon.enable.quick.filter=false
+##number of core to load the blocks in driver
+#no.of.cores.to.load.blocks.in.driver=10
 
 #################### Extra Configuration ##################
 ##Timestamp format of input data used for timestamp data type.
 #carbon.timestamp.format=yyyy-MM-dd HH:mm:ss
 ######## Dataload Configuration ########
-######File write buffer size used during sorting.
+##File write buffer size used during sorting.
 #carbon.sort.file.write.buffer.size=10485760
 ##Minimum no of intermediate files after which sort merged to be started.
 #carbon.sort.intermediate.files.limit=20
@@ -61,7 +63,7 @@ carbon.enable.quick.filter=false
 #carbon.max.thread.for.sorting=3
 ##Carbon blocklet size. Note: this configuration cannot be change once store is generated
 #carbon.blocklet.size=120000
-##How to times retry to get the lock
+##number of retries to get the metadata lock for loading data to table
 #carbon.load.metadata.lock.retries=3
 ##Maximum number of blocklets written in a single file.:Min=1:Max=1000
 #carbon.max.file.size=100
@@ -83,8 +85,6 @@ carbon.enable.quick.filter=false
 #max.query.execution.time=60
 ##Min max is feature added to enhance query performance. To disable this feature, make it false.
 #carbon.enableMinMax=true
-##number of core to load the blocks in driver
-#no.of.cores.to.load.blocks.in.driver=10
 ######## Global Dictionary Configurations ########
 ##To enable/disable identify high cardinality during first data loading
 #high.cardinality.identify.enable=true
