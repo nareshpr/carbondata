@@ -10,13 +10,13 @@ carbon.kettle.home=$<SPARK_HOME>/carbonlib/carbonplugins
 
 #################### Performance Configuration ##################
 ######## DataLoading Configuration ########
-#File read buffer size used during sorting
+#File read buffer size used during sorting(in MB) :MIN=1:MAX=100
 carbon.sort.file.buffer.size=20
-#Rowset size exchanged between data load graph steps
+#Rowset size exchanged between data load graph steps :MIN=500:MAX=1000000
 carbon.graph.rowset.size=100000
 #Number of cores to be used while data loading
 carbon.number.of.cores.while.loading=6
-#buffer size to sort and write to temp intermediate files
+#Record count to sort and write to temp intermediate files
 carbon.sort.size=500000
 #Algorithm for hashmap for hashkey calculation
 carbon.enableXXHash=true
@@ -36,8 +36,8 @@ carbon.major.compaction.size=1024
 ######## Query Configuration ########
 #Number of cores to be used while querying
 carbon.number.of.cores=4
-#Number of records to be in memory while querying
-carbon.inmemory.record.size=100000
+#Number of records to be in memory while querying :MIN=100000:MAX=240000
+carbon.inmemory.record.size=120000
 #Improves the performance of filter query
 carbon.enable.quick.filter=false
 ##number of core to load the blocks in driver
@@ -49,6 +49,8 @@ carbon.enable.quick.filter=false
 ######## Dataload Configuration ########
 ##File write buffer size used during sorting.
 #carbon.sort.file.write.buffer.size=10485760
+##Locking mechanism for data loading on a table
+#carbon.lock.type=LOCALLOCK
 ##Minimum no of intermediate files after which sort merged to be started.
 #carbon.sort.intermediate.files.limit=20
 ##space reserved in percentage for writing block meta data in carbon data file
@@ -57,13 +59,13 @@ carbon.enable.quick.filter=false
 #carbon.csv.read.buffersize.byte=1048576
 ##To identify and apply compression for non-high cardinality columns
 #high.cardinality.value=100000
-##CARBON maximum no of threads used for sorting.
-#carbon.max.thread.for.sorting=3
+##maximum no of threads used for reading intermediate files for final merging.
+#carbon.merge.sort.reader.thread=3
 ##Carbon blocklet size. Note: this configuration cannot be change once store is generated
 #carbon.blocklet.size=120000
 ##number of retries to get the metadata lock for loading data to table
 #carbon.load.metadata.lock.retries=3
-##Maximum number of blocklets written in a single file.:Min=1:Max=1000
+##Maximum number of blocklets written in a single file :Min=1:Max=1000
 #carbon.max.file.size=100
 ##Interval between the retries to get the lock
 #carbon.load.metadata.lock.retry.timeout.sec=5
