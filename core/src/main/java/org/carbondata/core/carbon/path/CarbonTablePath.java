@@ -106,7 +106,7 @@ public class CarbonTablePath extends Path {
   public static boolean isCarbonIndexFile(String fileNameWithPath) {
     int pos = fileNameWithPath.lastIndexOf('.');
     if (pos != -1) {
-      return fileNameWithPath.substring(pos).endsWith(INDEX_FILE_EXT);
+      return fileNameWithPath.substring(pos).startsWith(INDEX_FILE_EXT);
     }
     return false;
   }
