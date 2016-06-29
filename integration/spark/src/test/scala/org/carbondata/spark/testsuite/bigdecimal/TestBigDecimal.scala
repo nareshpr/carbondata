@@ -64,12 +64,12 @@ class TestBigDecimal extends QueryTest with BeforeAndAfterAll {
   
   test("test min datatype on big decimal column") {
     val output = sql("select min(salary) from carbonTable").collectAsList().get(0).get(0)
-    assert(output.isInstanceOf[BigDecimal])
+    assert(output.isInstanceOf[java.math.BigDecimal])
   }
 
   test("test max datatype on big decimal column") {
     val output = sql("select max(salary) from carbonTable").collectAsList().get(0).get(0)
-    assert(output.isInstanceOf[BigDecimal])
+    assert(output.isInstanceOf[java.math.BigDecimal])
   }
   
   test("test count function on big decimal column") {
