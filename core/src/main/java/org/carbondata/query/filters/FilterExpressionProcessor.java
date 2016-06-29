@@ -338,6 +338,8 @@ public class FilterExpressionProcessor implements FilterProcessor {
               .hasEncoding(Encoding.DICTIONARY) && !condExpression.getColumnList().get(0)
               .getCarbonColumn().hasEncoding(Encoding.DIRECT_DICTIONARY)) {
             return new ConditionalFilterResolverImpl(expression, true, true);
+          } else {
+            return new RowLevelFilterResolverImpl(expression, false, false, tableIdentifier);
           }
         } else {
           return new RowLevelFilterResolverImpl(expression, false, false, tableIdentifier);
