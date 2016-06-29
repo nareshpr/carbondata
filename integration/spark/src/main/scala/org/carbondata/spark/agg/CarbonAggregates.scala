@@ -615,9 +615,9 @@ case class MinFunctionCarbon(expr: Expression, base: AggregateExpression1, final
         null
       } else {
         min match {
-          case s: MaxBigDecimalAggregator =>
+          case s: MinBigDecimalAggregator =>
             Cast(Literal(min.getBigDecimalValue), base.dataType).eval(null)
-          case s: MaxLongAggregator =>
+          case s: MinLongAggregator =>
             Cast(Literal(min.getLongValue), base.dataType).eval(null)
           case _ =>
             Cast(Literal(min.getValueObject), base.dataType).eval(null)
