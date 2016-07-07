@@ -32,8 +32,10 @@ import org.apache.spark.sql.sources._
 import org.apache.spark.sql.types.{DataType, StructType}
 
 import org.carbondata.core.carbon.metadata.schema.table.column.CarbonDimension
+import org.carbondata.core.carbon.path.CarbonStorePath
 import org.carbondata.core.constants.CarbonCommonConstants
 import org.carbondata.core.datastorage.store.impl.FileFactory
+import org.carbondata.lcm.status.SegmentStatusManager
 import org.carbondata.spark.{CarbonOption, _}
 
 /**
@@ -137,17 +139,26 @@ private[sql] case class CarbonDatasourceRelation(
 
   def sqlContext: SQLContext = context
 
-  override val sizeInBytes: Long = {
-    val tablePath = carbonRelation.cubeMeta.storePath + CarbonCommonConstants.FILE_SEPARATOR +
-                    carbonRelation.cubeMeta.carbonTableIdentifier.getDatabaseName +
-                    CarbonCommonConstants.FILE_SEPARATOR +
-                    carbonRelation.cubeMeta.carbonTableIdentifier.getTableName
+  var tableStatusLastUpdateTime = 0L
+
+  var sizeInBytesLocalValue = 0L
+
+  override def sizeInBytes: Long = {
+    val tablePath = CarbonStorePath.getCarbonTablePath(
+        carbonRelation.cubeMeta.storePath,
+        carbonRelation.cubeMeta.carbonTableIdentifier).getPath
+    val tableStatusNewLastUpdatedTime = new SegmentStatusManager(
+        carbonRelation.cubeMeta.carbonTable.getAbsoluteTableIdentifier)
+          .getTableStatusLastModifiedTime
     val fileType = FileFactory.getFileType(tablePath)
-    if(FileFactory.isFileExist(tablePath, fileType)) {
-      FileFactory.getDirectorySize(tablePath)
+    if(FileFactory.isFileExist(tablePath, fileType) &&
+        tableStatusLastUpdateTime < tableStatusNewLastUpdatedTime) {
+      tableStatusLastUpdateTime = tableStatusNewLastUpdatedTime
+      sizeInBytesLocalValue = FileFactory.getDirectorySize(tablePath)
     } else {
-      0L
+      sizeInBytesLocalValue = 0L
     }
+    sizeInBytesLocalValue
   }
 }
 
