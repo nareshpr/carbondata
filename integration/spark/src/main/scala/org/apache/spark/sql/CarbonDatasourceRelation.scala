@@ -139,27 +139,7 @@ private[sql] case class CarbonDatasourceRelation(
 
   def sqlContext: SQLContext = context
 
-  var tableStatusLastUpdateTime = 0L
-
-  var sizeInBytesLocalValue = 0L
-
-  override def sizeInBytes: Long = {
-    val tablePath = CarbonStorePath.getCarbonTablePath(
-        carbonRelation.cubeMeta.storePath,
-        carbonRelation.cubeMeta.carbonTableIdentifier).getPath
-    val tableStatusNewLastUpdatedTime = new SegmentStatusManager(
-        carbonRelation.cubeMeta.carbonTable.getAbsoluteTableIdentifier)
-          .getTableStatusLastModifiedTime
-    val fileType = FileFactory.getFileType(tablePath)
-    if(FileFactory.isFileExist(tablePath, fileType) &&
-        tableStatusLastUpdateTime < tableStatusNewLastUpdatedTime) {
-      tableStatusLastUpdateTime = tableStatusNewLastUpdatedTime
-      sizeInBytesLocalValue = FileFactory.getDirectorySize(tablePath)
-    } else {
-      sizeInBytesLocalValue = 0L
-    }
-    sizeInBytesLocalValue
-  }
+  override def sizeInBytes: Long = carbonRelation.sizeInBytes
 }
 
 /**
@@ -259,7 +239,7 @@ case class CarbonRelation(
   override val output = dimensionsAttr ++ measureAttr
 
   // TODO: Use data from the footers.
-  override lazy val statistics = Statistics(sizeInBytes = sqlContext.conf.defaultSizeInBytes)
+  override lazy val statistics = Statistics(sizeInBytes = this.sizeInBytes)
 
   override def equals(other: Any): Boolean = {
     other match {
@@ -267,6 +247,27 @@ case class CarbonRelation(
         p.schemaName == schemaName && p.output == output && p.cubeName == cubeName
       case _ => false
     }
+  }
+
+  private var tableStatusLastUpdateTime = 0L
+
+  private var sizeInBytesLocalValue = 0L
+
+  def sizeInBytes: Long = {
+    val tableStatusNewLastUpdatedTime = new SegmentStatusManager(
+        cubeMeta.carbonTable.getAbsoluteTableIdentifier)
+          .getTableStatusLastModifiedTime
+    if (tableStatusLastUpdateTime != tableStatusNewLastUpdatedTime) {
+      val tablePath = CarbonStorePath.getCarbonTablePath(
+          cubeMeta.storePath,
+          cubeMeta.carbonTableIdentifier).getPath
+      val fileType = FileFactory.getFileType(tablePath)
+      if(FileFactory.isFileExist(tablePath, fileType)) {
+        tableStatusLastUpdateTime = tableStatusNewLastUpdatedTime
+        sizeInBytesLocalValue = FileFactory.getDirectorySize(tablePath)
+      }
+    }
+    sizeInBytesLocalValue
   }
 
 }

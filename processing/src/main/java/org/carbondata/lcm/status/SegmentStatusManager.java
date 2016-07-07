@@ -88,7 +88,7 @@ public class SegmentStatusManager {
     String tableStatusPath = CarbonStorePath.getCarbonTablePath(
         absoluteTableIdentifier.getStorePath(), absoluteTableIdentifier.getCarbonTableIdentifier())
           .getTableStatusFilePath();
-    return FileFactory.getCarbonFile(tableStatusPath, FileFactory.getFileType())
+    return FileFactory.getCarbonFile(tableStatusPath, FileFactory.getFileType(tableStatusPath))
       .getLastModifiedTime();
   }
 
