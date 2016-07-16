@@ -35,9 +35,9 @@ import org.carbondata.common.logging.LogServiceFactory;
 import org.carbondata.core.cache.dictionary.Dictionary;
 import org.carbondata.core.constants.CarbonCommonConstants;
 import org.carbondata.core.file.manager.composite.IFileManagerComposite;
+import org.carbondata.core.keygenerator.KeyGenException;
 import org.carbondata.core.keygenerator.directdictionary.DirectDictionaryGenerator;
 import org.carbondata.core.keygenerator.directdictionary.DirectDictionaryKeyGeneratorFactory;
-import org.carbondata.core.keygenerator.KeyGenException;
 import org.carbondata.core.writer.HierarchyValueWriterForCSV;
 import org.carbondata.processing.datatypes.GenericDataType;
 import org.carbondata.processing.schema.metadata.ArrayWrapper;
@@ -149,12 +149,13 @@ public abstract class CarbonCSVBasedDimSurrogateKeyGen {
     key = dicCache.getSurrogateKey(tuple);
     return key;
   }
-  
+
   /**
    * @param tuple         The string value whose surrogate key will be gennerated.
    * @param tabColumnName The K of dictionaryCaches Map, for example "tablename_columnname"
    */
-  public Integer generateSurrogateKeys(String tuple, String tabColumnName, String columnId) throws KettleException {
+  public Integer generateSurrogateKeys(String tuple, String tabColumnName, String columnId)
+      throws KettleException {
     Integer key = null;
     Dictionary dicCache = dictionaryCaches.get(tabColumnName);
     if (null == dicCache) {
@@ -353,9 +354,9 @@ public abstract class CarbonCSVBasedDimSurrogateKeyGen {
           eachPrimitive.setSurrogateIndex(noOfPrimitiveDims);
           noOfPrimitiveDims++;
           ColumnSchemaDetails columnSchemaDetails =
-     		  columnsInfo.getColumnSchemaDetailsWrapper().get(eachPrimitive.getColumnId());
+              columnsInfo.getColumnSchemaDetailsWrapper().get(eachPrimitive.getColumnId());
           if (columnSchemaDetails.isDirectDictionary()) {
-        	  isDirectDictionary.add(true);
+            isDirectDictionary.add(true);
           }
         }
       } else {
@@ -366,9 +367,9 @@ public abstract class CarbonCSVBasedDimSurrogateKeyGen {
     }
     max = new int[noOfPrimitiveDims];
     for(int i = 0; i < isDirectDictionary.size(); i++) {
-	  if (isDirectDictionary.get(i)) {
+      if (isDirectDictionary.get(i)) {
         max[i] = Integer.MAX_VALUE;
-	  }
+      }
     }
     this.dimsFiles = dimFilesForPrimitives.toArray(new String[dimFilesForPrimitives.size()]);
 

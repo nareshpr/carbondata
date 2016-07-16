@@ -1078,13 +1078,17 @@ public class QueryUtil {
                   dimension.getColName(), ++parentBlockIndex));
           break;
         default:
+          boolean isDirectDictionary = CarbonUtil.hasEncoding(
+              dimension.getListOfChildDimensions().get(i).getEncoder(),
+              Encoding.DIRECT_DICTIONARY);
           parentQueryType.addChildren(
               new PrimitiveQueryType(dimension.getListOfChildDimensions().get(i).getColName(),
                   dimension.getColName(), ++parentBlockIndex,
                   dimension.getListOfChildDimensions().get(i).getDataType(),
                   eachComplexColumnValueSize[dimension.getListOfChildDimensions().get(i)
                       .getComplexTypeOrdinal()], columnIdToDictionaryMap
-                  .get(dimension.getListOfChildDimensions().get(i).getColumnId())));
+                  .get(dimension.getListOfChildDimensions().get(i).getColumnId()),
+                  isDirectDictionary));
       }
       if (dimension.getListOfChildDimensions().get(i).getNumberOfChild() > 0) {
         parentBlockIndex = fillChildrenDetails(eachComplexColumnValueSize, columnIdToDictionaryMap,

@@ -27,13 +27,12 @@ import java.util.List;
 
 import org.carbondata.core.cache.dictionary.Dictionary;
 import org.carbondata.core.carbon.datastore.chunk.DimensionColumnDataChunk;
-import org.carbondata.core.carbon.metadata.encoder.Encoding;
 import org.carbondata.core.keygenerator.directdictionary.DirectDictionaryGenerator;
 import org.carbondata.core.keygenerator.directdictionary.DirectDictionaryKeyGeneratorFactory;
 import org.carbondata.core.keygenerator.mdkey.Bits;
-import org.carbondata.core.util.CarbonUtil;
 import org.carbondata.query.carbon.processor.BlocksChunkHolder;
 import org.carbondata.query.carbon.util.DataTypeUtil;
+
 import org.apache.spark.sql.types.BooleanType;
 import org.apache.spark.sql.types.DataType;
 import org.apache.spark.sql.types.DoubleType;
@@ -57,9 +56,11 @@ public class PrimitiveQueryType extends ComplexQueryType implements GenericQuery
 
   private org.carbondata.core.carbon.metadata.datatype.DataType dataType;
 
+  private boolean isDirectDictionary;
+
   public PrimitiveQueryType(String name, String parentname, int blockIndex,
       org.carbondata.core.carbon.metadata.datatype.DataType dataType, int keySize,
-      Dictionary dictionary) {
+      Dictionary dictionary, boolean isDirectDictionary) {
     super(name, parentname, blockIndex);
     this.dataType = dataType;
     this.keySize = keySize;
@@ -67,6 +68,7 @@ public class PrimitiveQueryType extends ComplexQueryType implements GenericQuery
     this.name = name;
     this.parentname = parentname;
     this.blockIndex = blockIndex;
+    this.isDirectDictionary = isDirectDictionary;
   }
 
   @Override public void addChildren(GenericQueryType children) {
@@ -166,15 +168,13 @@ public class PrimitiveQueryType extends ComplexQueryType implements GenericQuery
     Bits bit = new Bits(new int[]{keySize * 8});
     int surrgateValue = (int)bit.getKeyArray(data)[0];
     Object actualData = null;
-    if (org.carbondata.core.carbon.metadata.datatype.DataType.TIMESTAMP.equals(dataType)) {
-          DirectDictionaryGenerator directDictionaryGenerator = DirectDictionaryKeyGeneratorFactory
-              .getDirectDictionaryGenerator(dataType);
-          actualData =
-              directDictionaryGenerator.getValueFromSurrogate(surrgateValue);
+    if (isDirectDictionary) {
+      DirectDictionaryGenerator directDictionaryGenerator = DirectDictionaryKeyGeneratorFactory
+          .getDirectDictionaryGenerator(dataType);
+      actualData = directDictionaryGenerator.getValueFromSurrogate(surrgateValue);
     } else {
-    String dictionaryValueForKey =
-        dictionary.getDictionaryValueForKey(surrgateValue);
-    actualData = DataTypeUtil.getDataBasedOnDataType(dictionaryValueForKey, this.dataType);
+      String dictionaryValueForKey = dictionary.getDictionaryValueForKey(surrgateValue);
+      actualData = DataTypeUtil.getDataBasedOnDataType(dictionaryValueForKey, this.dataType);
     }
     if (null != actualData
         && this.dataType == org.carbondata.core.carbon.metadata.datatype.DataType.STRING) {
@@ -182,15 +182,5 @@ public class PrimitiveQueryType extends ComplexQueryType implements GenericQuery
       return UTF8String.fromBytes(dataBytes);
     }
     return actualData;
-  }
-
-  private int unsignedIntFromByteArray(byte[] bytes) {
-    int res = 0;
-    if (bytes == null) return res;
-
-    for (int i = 0; i < bytes.length; i++) {
-      res = (res * 10) + ((bytes[i] & 0xff));
-    }
-    return res;
   }
 }
