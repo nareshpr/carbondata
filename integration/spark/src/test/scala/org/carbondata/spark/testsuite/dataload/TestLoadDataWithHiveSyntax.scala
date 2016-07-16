@@ -312,7 +312,6 @@ class TestLoadDataWithHiveSyntax extends QueryTest with BeforeAndAfterAll {
     sql("drop table if exists primitivecarbontable")
   }
   
-  test("test carbon table data loading when table name is in different case with create table, for UpperCase") {
   test(
     "test carbon table data loading when table name is in different case with create table, for " +
       "UpperCase"
