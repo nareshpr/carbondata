@@ -27,9 +27,13 @@ import java.util.List;
 
 import org.carbondata.core.cache.dictionary.Dictionary;
 import org.carbondata.core.carbon.datastore.chunk.DimensionColumnDataChunk;
+import org.carbondata.core.carbon.metadata.encoder.Encoding;
+import org.carbondata.core.keygenerator.directdictionary.DirectDictionaryGenerator;
+import org.carbondata.core.keygenerator.directdictionary.DirectDictionaryKeyGeneratorFactory;
+import org.carbondata.core.keygenerator.mdkey.Bits;
+import org.carbondata.core.util.CarbonUtil;
 import org.carbondata.query.carbon.processor.BlocksChunkHolder;
 import org.carbondata.query.carbon.util.DataTypeUtil;
-
 import org.apache.spark.sql.types.BooleanType;
 import org.apache.spark.sql.types.DataType;
 import org.apache.spark.sql.types.DoubleType;
@@ -159,9 +163,19 @@ public class PrimitiveQueryType extends ComplexQueryType implements GenericQuery
 
     byte[] data = new byte[keySize];
     surrogateData.get(data);
+    Bits bit = new Bits(new int[]{keySize * 8});
+    int surrgateValue = (int)bit.getKeyArray(data)[0];
+    Object actualData = null;
+    if (org.carbondata.core.carbon.metadata.datatype.DataType.TIMESTAMP.equals(dataType)) {
+          DirectDictionaryGenerator directDictionaryGenerator = DirectDictionaryKeyGeneratorFactory
+              .getDirectDictionaryGenerator(dataType);
+          actualData =
+              directDictionaryGenerator.getValueFromSurrogate(surrgateValue);
+    } else {
     String dictionaryValueForKey =
-        dictionary.getDictionaryValueForKey(unsignedIntFromByteArray(data));
-    Object actualData = DataTypeUtil.getDataBasedOnDataType(dictionaryValueForKey, this.dataType);
+        dictionary.getDictionaryValueForKey(surrgateValue);
+    actualData = DataTypeUtil.getDataBasedOnDataType(dictionaryValueForKey, this.dataType);
+    }
     if (null != actualData
         && this.dataType == org.carbondata.core.carbon.metadata.datatype.DataType.STRING) {
       byte[] dataBytes = ((String) actualData).getBytes(Charset.defaultCharset());

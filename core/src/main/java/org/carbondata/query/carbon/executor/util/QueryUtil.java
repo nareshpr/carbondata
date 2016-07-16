@@ -375,10 +375,11 @@ public class QueryUtil {
   private static void getChildDimensionDictionaryDetail(CarbonDimension queryDimensions,
       Set<String> dictionaryDimensionFromQuery) {
     for (int j = 0; j < queryDimensions.numberOfChild(); j++) {
+      List<Encoding> encodingList = queryDimensions.getListOfChildDimensions().get(j).getEncoder();
       if (queryDimensions.getListOfChildDimensions().get(j).numberOfChild() > 0) {
         getChildDimensionDictionaryDetail(queryDimensions.getListOfChildDimensions().get(j),
             dictionaryDimensionFromQuery);
-      } else {
+      } else if(!CarbonUtil.hasEncoding(encodingList, Encoding.DIRECT_DICTIONARY)) {
         dictionaryDimensionFromQuery
             .add(queryDimensions.getListOfChildDimensions().get(j).getColumnId());
       }
