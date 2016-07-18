@@ -199,7 +199,7 @@ case class CarbonRelation(
       .asInstanceOf[this.type]
   }
 
-  val metadata = (new MetadataBuilder).putString("comment", "null").build
+  val metadata = (new MetadataBuilder).putString("comment", null).build
 
   val dimensionsAttr = {
     val sett = new LinkedHashSet(
