@@ -20,7 +20,6 @@ package org.apache.spark.sql
 import java.util.LinkedHashSet
 
 import scala.collection.JavaConverters._
-import scala.collection.mutable
 import scala.language.implicitConversions
 
 import org.apache.hadoop.fs.Path
@@ -30,7 +29,7 @@ import org.apache.spark.sql.catalyst.expressions.AttributeReference
 import org.apache.spark.sql.catalyst.plans.logical._
 import org.apache.spark.sql.hive.{CarbonMetaData, CarbonMetastoreTypes, TableMeta}
 import org.apache.spark.sql.sources._
-import org.apache.spark.sql.types.{DataType, MetadataBuilder, StructType}
+import org.apache.spark.sql.types.{DataType, StructType}
 
 import org.carbondata.core.carbon.metadata.schema.table.column.CarbonDimension
 import org.carbondata.core.carbon.path.CarbonStorePath
@@ -199,8 +198,6 @@ case class CarbonRelation(
       .asInstanceOf[this.type]
   }
 
-  val metadata = (new MetadataBuilder).putString("comment", null).build
-
   val dimensionsAttr = {
     val sett = new LinkedHashSet(
       cubeMeta.carbonTable.getDimensionByTableName(cubeMeta.carbonTableIdentifier.getTableName)
@@ -219,8 +216,7 @@ case class CarbonRelation(
       AttributeReference(
         dim.getColName,
         output,
-        nullable = true,
-        metadata)(qualifiers = tableName +: alias.toSeq)
+        nullable = true)(qualifiers = tableName +: alias.toSeq)
     })
   }
 
@@ -237,8 +233,7 @@ case class CarbonRelation(
           case "decimal" => "decimal(" + x.getPrecision + "," + x.getScale + ")"
           case others => others
         }),
-      nullable = true,
-      metadata)(qualifiers = tableName +: alias.toSeq))
+      nullable = true)(qualifiers = tableName +: alias.toSeq))
   }
 
   override val output = dimensionsAttr ++ measureAttr
