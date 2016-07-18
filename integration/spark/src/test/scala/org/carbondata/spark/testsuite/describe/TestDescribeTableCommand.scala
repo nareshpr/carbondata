@@ -40,7 +40,7 @@ class TestDescribeTableCommand extends QueryTest with BeforeAndAfterAll {
   test("Create carbon and hive table and compare describe") {
     sql("create table carbontable(id int, username struct<sur_name:string," +
         "actual_name:struct<first_name:string,last_name:string>>, country string, salary double)" +
-        "STORED BY 'org.apache.carbondata.format'")
+        "STORED BY 'org.apache.carbondata.format' TBLPROPERTIES('DICTIONARY_INCLUDE'='id')")
     sql("create table hivetable(id int, username struct<sur_name:string," +
         "actual_name:struct<first_name:string,last_name:string>>, country string, salary double)")
     checkAnswer(sql("describe carbontable"), sql("describe hivetable"))
