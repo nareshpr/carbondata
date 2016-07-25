@@ -570,8 +570,14 @@ case class CarbonTableScan(
       conf,
       cubeCreationTime,
       schemaLastUpdatedTime,
-      carbonCatalog.storePath)
+      carbonCatalog.storePath,
+      this)
     big
+  }
+
+  def newPredicate(expression: org.apache.spark.sql.catalyst.expressions.Expression):
+      InternalRow => Boolean = {
+    super.newPredicate(expression, output)
   }
 
   def doExecute(): RDD[InternalRow] = {

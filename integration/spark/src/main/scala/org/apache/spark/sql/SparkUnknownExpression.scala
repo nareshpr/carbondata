@@ -21,6 +21,7 @@ import java.util.{ArrayList, List}
 
 import scala.collection.JavaConverters._
 
+import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.catalyst.expressions.{Expression => SparkExpression, GenericMutableRow}
 
 import org.carbondata.core.carbon.metadata.encoder.Encoding
@@ -30,9 +31,10 @@ import org.carbondata.query.expression.conditional.ConditionalExpression
 import org.carbondata.query.expression.exception.FilterUnsupportedException
 import org.carbondata.spark.util.CarbonScalaUtil
 
-class SparkUnknownExpression(sparkExp: SparkExpression)
+class SparkUnknownExpression(var sparkExp: SparkExpression)
   extends UnknownExpression with ConditionalExpression {
 
+  var evaluateExpression: (InternalRow) => Any = sparkExp.eval
   children.addAll(getColumnList())
 
   override def evaluate(carbonRowInstance: RowIntf): ExpressionResult = {
@@ -49,7 +51,7 @@ class SparkUnknownExpression(sparkExp: SparkExpression)
       }
     }
     try {
-      val sparkRes = sparkExp.eval(
+      val sparkRes = evaluateExpression(
         new GenericMutableRow(values.map(a => a.asInstanceOf[Any]).toArray)
       )
 

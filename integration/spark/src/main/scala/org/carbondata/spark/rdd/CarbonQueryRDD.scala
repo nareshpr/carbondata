@@ -27,6 +27,13 @@ import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.mapreduce.Job
 import org.apache.spark.{Logging, Partition, SparkContext, TaskContext}
 import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.CarbonTableScan
+import org.apache.spark.sql.SparkUnknownExpression
+import org.apache.spark.sql.catalyst.InternalRow
+import org.apache.spark.sql.catalyst.expressions.Attribute
+import org.apache.spark.sql.catalyst.expressions.InterpretedPredicate
+import org.apache.spark.sql.catalyst.expressions.codegen.GeneratePredicate
+import org.apache.spark.sql.execution.SparkPlan
 import org.apache.spark.sql.hive.DistributionUtil
 
 import org.carbondata.common.logging.LogServiceFactory
@@ -39,9 +46,11 @@ import org.carbondata.query.carbon.executor.QueryExecutorFactory
 import org.carbondata.query.carbon.model.QueryModel
 import org.carbondata.query.carbon.result.RowResult
 import org.carbondata.query.expression.Expression
+import org.carbondata.query.filters.measurefilter.util.FilterUtil
 import org.carbondata.spark.Value
 import org.carbondata.spark.load.CarbonLoaderUtil
 import org.carbondata.spark.util.QueryPlanUtil
+
 
 
 class CarbonSparkPartition(rddId: Int, val idx: Int,
@@ -69,7 +78,8 @@ class CarbonQueryRDD[V: ClassTag](
     @transient conf: Configuration,
     cubeCreationTime: Long,
     schemaLastUpdatedTime: Long,
-    baseStoreLocation: String)
+    baseStoreLocation: String,
+    sparkPlan: CarbonTableScan = null)
   extends RDD[V](sc, Nil) with Logging {
 
   val defaultParallelism = sc.defaultParallelism
@@ -169,6 +179,16 @@ class CarbonQueryRDD[V: ClassTag](
 
   override def compute(thepartition: Partition, context: TaskContext): Iterator[V] = {
     val LOGGER = LogServiceFactory.getLogService(this.getClass.getName)
+    val filterResolverTree = this.queryModel.getFilterExpressionResolverTree
+    if (null != filterResolverTree && null != sparkPlan) {
+      FilterUtil.getColumnList(filterResolverTree.getFilterExpression).asScala.foreach(
+          unknownExpression => {
+        val unKnownSparkExpression = unknownExpression.
+            asInstanceOf[org.apache.spark.sql.SparkUnknownExpression]
+        unKnownSparkExpression.evaluateExpression =
+            sparkPlan.newPredicate(unKnownSparkExpression.sparkExp)
+      })
+    }
     val iter = new Iterator[V] {
       var rowIterator: CarbonIterator[Array[Object]] = _
       var queryStartTime: Long = 0
