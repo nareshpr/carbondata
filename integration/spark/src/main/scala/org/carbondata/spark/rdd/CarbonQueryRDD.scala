@@ -185,6 +185,7 @@ class CarbonQueryRDD[V: ClassTag](
             asInstanceOf[org.apache.spark.sql.SparkUnknownExpression]
         unKnownSparkExpression.evaluateExpression =
             sparkPlan.newProjection(unKnownSparkExpression.sparkExp)
+        unKnownSparkExpression.isExecutor = true
       })
     }
     val iter = new Iterator[V] {

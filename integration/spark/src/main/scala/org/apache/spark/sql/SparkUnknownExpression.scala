@@ -35,6 +35,7 @@ class SparkUnknownExpression(var sparkExp: SparkExpression)
   extends UnknownExpression with ConditionalExpression {
 
   var evaluateExpression: (InternalRow) => Any = sparkExp.eval
+  var isExecutor: Boolean = false
   children.addAll(getColumnList())
 
   override def evaluate(carbonRowInstance: RowIntf): ExpressionResult = {
@@ -51,10 +52,13 @@ class SparkUnknownExpression(var sparkExp: SparkExpression)
       }
     }
     try {
-      val sparkRes = evaluateExpression(
-        new GenericMutableRow(values.map(a => a.asInstanceOf[Any]).toArray)
-      )
-
+      val result = evaluateExpression(
+          new GenericMutableRow(values.map(a => a.asInstanceOf[Any]).toArray))
+      val sparkRes = if (isExecutor) {
+        result.asInstanceOf[InternalRow].get(0, sparkExp.dataType)
+      } else {
+        result
+      }
       new ExpressionResult(CarbonScalaUtil.convertSparkToCarbonDataType(sparkExp.dataType),
         sparkRes
       )
