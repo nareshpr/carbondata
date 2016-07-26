@@ -51,8 +51,6 @@ import org.carbondata.spark.Value
 import org.carbondata.spark.load.CarbonLoaderUtil
 import org.carbondata.spark.util.QueryPlanUtil
 
-
-
 class CarbonSparkPartition(rddId: Int, val idx: Int,
   val locations: Array[String],
   val tableBlockInfos: util.List[TableBlockInfo])
@@ -186,7 +184,7 @@ class CarbonQueryRDD[V: ClassTag](
         val unKnownSparkExpression = unknownExpression.
             asInstanceOf[org.apache.spark.sql.SparkUnknownExpression]
         unKnownSparkExpression.evaluateExpression =
-            sparkPlan.newPredicate(unKnownSparkExpression.sparkExp)
+            sparkPlan.newProjection(unKnownSparkExpression.sparkExp)
       })
     }
     val iter = new Iterator[V] {

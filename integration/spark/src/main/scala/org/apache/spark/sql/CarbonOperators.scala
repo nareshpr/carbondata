@@ -575,9 +575,9 @@ case class CarbonTableScan(
     big
   }
 
-  def newPredicate(expression: org.apache.spark.sql.catalyst.expressions.Expression):
-      InternalRow => Boolean = {
-    super.newPredicate(expression, output)
+  def newProjection(expression: org.apache.spark.sql.catalyst.expressions.Expression):
+      InternalRow => Any = {
+    super.newProjection(Seq(expression), output)
   }
 
   def doExecute(): RDD[InternalRow] = {
