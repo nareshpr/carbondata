@@ -29,11 +29,6 @@ import org.apache.spark.{Logging, Partition, SparkContext, TaskContext}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.CarbonTableScan
 import org.apache.spark.sql.SparkUnknownExpression
-import org.apache.spark.sql.catalyst.InternalRow
-import org.apache.spark.sql.catalyst.expressions.Attribute
-import org.apache.spark.sql.catalyst.expressions.InterpretedPredicate
-import org.apache.spark.sql.catalyst.expressions.codegen.GeneratePredicate
-import org.apache.spark.sql.execution.SparkPlan
 import org.apache.spark.sql.hive.DistributionUtil
 
 import org.carbondata.common.logging.LogServiceFactory
@@ -179,8 +174,8 @@ class CarbonQueryRDD[V: ClassTag](
     val LOGGER = LogServiceFactory.getLogService(this.getClass.getName)
     val filterResolverTree = this.queryModel.getFilterExpressionResolverTree
     if (null != filterResolverTree && null != sparkPlan) {
-      FilterUtil.getColumnList(filterResolverTree.getFilterExpression).asScala.foreach(
-          unknownExpression => {
+      FilterUtil.getUnknownExpressionsList(filterResolverTree.getFilterExpression).
+          asScala.foreach(unknownExpression => {
         val unKnownSparkExpression = unknownExpression.
             asInstanceOf[org.apache.spark.sql.SparkUnknownExpression]
         unKnownSparkExpression.evaluateExpression =

@@ -1353,21 +1353,33 @@ public final class FilterUtil {
     }
   }
 
-  public static List<UnknownExpression> getColumnList(Expression expression) {
+  /**
+   * This method will return list of all the unknown expressions
+   *
+   * @param expression
+   */
+  public static List<UnknownExpression> getUnknownExpressionsList(Expression expression) {
     List<UnknownExpression> listOfExp =
         new ArrayList<UnknownExpression>(CarbonCommonConstants.DEFAULT_COLLECTION_SIZE);
-    getColumnList(expression, listOfExp);
+    getUnknownExpressionsList(expression, listOfExp);
     return listOfExp;
   }
 
-  private static void getColumnList(Expression expression, List<UnknownExpression> lst) {
+  /**
+   * This method will prepare the list with all unknown expressions
+   *
+   * @param expression
+   * @param lst
+   */
+  private static void getUnknownExpressionsList(Expression expression,
+      List<UnknownExpression> lst) {
     if (expression instanceof UnknownExpression) {
       UnknownExpression colExp = (UnknownExpression) expression;
       lst.add(colExp);
       return;
     }
     for (Expression child : expression.getChildren()) {
-      getColumnList(child, lst);
+      getUnknownExpressionsList(child, lst);
     }
   }
 
