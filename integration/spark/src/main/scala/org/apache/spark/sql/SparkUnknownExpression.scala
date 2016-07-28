@@ -34,8 +34,8 @@ import org.carbondata.spark.util.CarbonScalaUtil
 class SparkUnknownExpression(var sparkExp: SparkExpression)
   extends UnknownExpression with ConditionalExpression {
 
-  var evaluateExpression: (InternalRow) => Any = sparkExp.eval
-  var isExecutor: Boolean = false
+  private var evaluateExpression: (InternalRow) => Any = sparkExp.eval
+  private var isExecutor: Boolean = false
   children.addAll(getColumnList())
 
   override def evaluate(carbonRowInstance: RowIntf): ExpressionResult = {
@@ -76,6 +76,10 @@ class SparkUnknownExpression(var sparkExp: SparkExpression)
     sparkExp.toString()
   }
 
+  def setEvaluateExpression(evaluateExpression: (InternalRow) => Any): Unit = {
+    this.evaluateExpression = evaluateExpression
+    isExecutor = true
+  }
 
   def getColumnList(): java.util.List[ColumnExpression] = {
 

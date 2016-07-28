@@ -178,9 +178,8 @@ class CarbonQueryRDD[V: ClassTag](
           asScala.foreach(unknownExpression => {
         val unKnownSparkExpression = unknownExpression.
             asInstanceOf[org.apache.spark.sql.SparkUnknownExpression]
-        unKnownSparkExpression.evaluateExpression =
-            sparkPlan.newProjection(unKnownSparkExpression.sparkExp)
-        unKnownSparkExpression.isExecutor = true
+        unKnownSparkExpression.setEvaluateExpression(
+            sparkPlan.newProjection(unKnownSparkExpression.sparkExp))
       })
     }
     val iter = new Iterator[V] {
